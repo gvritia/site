@@ -1,0 +1,428 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Словарь сленга 2023-24 - Отметка знакомства</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .instructions {
+            background: #f8f9fa;
+            padding: 25px;
+            border-bottom: 3px solid #e9ecef;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .status-known-used { background-color: #d4edda; color: #155724; }
+        .status-known-not-used { background-color: #fff3cd; color: #856404; }
+        .status-unknown { background-color: #f8d7da; color: #721c24; }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        #saveBtn {
+            background: #28a745;
+            color: white;
+        }
+
+        #saveBtn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        #resetBtn {
+            background: #dc3545;
+            color: white;
+        }
+
+        #resetBtn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        #exportBtn {
+            background: #17a2b8;
+            color: white;
+        }
+
+        #exportBtn:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
+        .dictionary-container {
+            padding: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .dictionary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .word-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .word-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .word-text {
+            font-weight: 600;
+            font-size: 1.1em;
+            flex: 1;
+        }
+
+        .status-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .status-btn {
+            width: 35px;
+            height: 35px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-known-used { background: #28a745; color: white; }
+        .btn-known-not-used { background: #ffc107; color: black; }
+        .btn-unknown { background: #dc3545; color: white; }
+        .word-item.known-used { border-color: #28a745; background: #d4edda; }
+        .word-item.known-not-used { border-color: #ffc107; background: #fff3cd; }
+        .word-item.unknown { border-color: #dc3545; background: #f8d7da; }
+
+        .stats {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .stats span {
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+        }
+
+        @media (max-width: 768px) {
+            .dictionary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .legend {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📚 Словарь сленга 2023-24</h1>
+        <div class="subtitle">Отметьте ваше знакомство со словами современного сленга</div>
+    </header>
+
+    <section class="instructions">
+        <div class="legend">
+            <div class="legend-item status-known-used">
+                <div class="status-btn btn-known-used">✅</div>
+                Знаю и употребляю
+            </div>
+            <div class="legend-item status-known-not-used">
+                <div class="status-btn btn-known-not-used">💛</div>
+                Знаю, но не употребляю
+            </div>
+            <div class="legend-item status-unknown">
+                <div class="status-btn btn-unknown">❌</div>
+                Не знаю
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="saveBtn">💾 Сохранить прогресс</button>
+            <button id="resetBtn">🔄 Сбросить всё</button>
+            <button id="exportBtn">📤 Экспорт результатов</button>
+        </div>
+    </section>
+
+    <section class="dictionary-container">
+        <div class="dictionary-grid" id="dictionaryGrid">
+            <!-- Слова будут добавлены через JavaScript -->
+        </div>
+    </section>
+
+    <section class="stats">
+        <div>Статистика:
+            <span id="knownUsedCount">0</span> знаю и употребляю •
+            <span id="knownNotUsedCount">0</span> знаю, но не употребляю •
+            <span id="unknownCount">0</span> не знаю •
+            <span id="totalCount">0</span> всего слов
+        </div>
+    </section>
+
+    <footer>
+        <p>Сохраните страницу чтобы вернуться к своим результатам позже!</p>
+    </footer>
+</div>
+
+<script>
+    // Массив слов из вашего списка
+    const slangWords = [
+        'АБОБА', 'АБЬЮЗЕР', 'АГР', 'АЙС', 'АЛЬТУШКА', 'АЛЬФА', 'АЛЬФАЧ', 'АЛЬФОНС', 'АНАКОНДА',
+        'АНСКИЛ/АНСКИЛЬЩИНА', 'АНТИХАЙП', 'АРБУЗЕР', 'АУТСАЙДЕР', 'АУФ', 'АШКА', 'БАЗА/БАЗИРОВАННЫЙ',
+        'БАЗАР', 'БАЙТ/БАЙТИТЬ', 'БАНИТЬ', 'БЕЗ «Б»', 'БЕЙБИК', 'БИАС', 'БИМБО/ХИМБО', 'БЛИЗКИЙ',
+        'БЛОРБО', 'БУЛЛИНГ', 'БУЛЬБУЛЯТОР', 'БУМЕР', 'В ПОТОКЕ', 'ВАЙБ ПЛЮСОВОЙ/МИНУСОВОЙ',
+        'ВАНИЛЬКА', 'ВАРИК', 'ВПИСКА', 'ГАБЕЛЛА', 'ГАЗЛАЙТИТЬ', 'ГАНГЧА', 'ГГ', 'ГЕН Г', 'ГИГАЧАД',
+        'ГОЙДА', 'ГУК', 'ГУЛЬ', 'ГРИНДИТЬ (ГРИНД)', 'ДА ЕСТЬ ЖЕ', 'ДА НЕТ ЖЕ', 'ДЕВАХА', 'ДЕДИНСАЙД',
+        'ДЕФОЛТ', 'ДЕФ(ДЕФИТЬ)', 'ДИСЕ', 'ДОДИК', 'ДРИП', 'ДУМЕР', 'ДЬЯХАН', 'ЕЗКА/ЕСКА', 'ЖИЖА',
+        'ЖИМКА', 'ЗАВАЛИТЬ', 'ЗАДРОТ', 'ЗАЛЕТЕТЬ', 'ЗАШКВАР', 'ЗУМЕР', 'ИЗИ 2', 'ИМБА', 'ИМПОСТЕР',
+        'КАЙФ', 'КАРЕН/КЕВИН', 'КАСТ (КАСТОВАТЬ)', 'КАТКА', 'КД', 'КЕНТ', 'КЕНТИК', 'КРАШ', 'КРИНЖ',
+        'КРИПОВЫЙ', 'КРИПТ', 'КРИПТА', 'КРЫСЕЛ', 'КОЛОКОЛ', 'КОСАРЬ', 'КОСУХА', 'КРАШ', 'КУКОЖ',
+        'КУН', 'ЛАЛКА', 'ЛАМПОВО', 'ЛД', 'ЛИВНУТЬ', 'ЛИТЕКС', 'ЛОУТАБ', 'ЛП', 'МАМКА', 'МАСИК',
+        'МАХАЧ', 'МЕРЧ', 'МЕМ', 'МУДИК', 'МУТИТЬ/МУТ', 'МЯСО', 'НАДУВАТЬ СВИНЕЙ', 'НАЙДИ РАБОТУ',
+        'НАШ СЛОН', 'НЕТАКУСЯ', 'НЕФОР', 'НОУКЭП', 'НОУНЭЙМ ОБСА', 'ОВЕРДОФИГА', 'ОЛД', 'ОМЕЖКА',
+        'ПАДИК', 'ПАЛЬ', 'ПАМПИТЬ', 'ПАНЧ', 'ПАПИК', 'ПАТИ', 'ПАХАН', 'ПЕДАЛИ', 'ПЕКАРНЯ',
+        'ПЕРЕГОВОРНАЯ №2', 'ПЕРЕТЕРЕТЬ', 'ПЕРК', 'ПЛОЙКА', 'ПОДКАТ', 'ПОДПИВАС', 'ПОЗЕР', 'ПОЗЯЗЯ',
+        'ПОПУСК', 'ПОТРОГАТИ ТРАВУ', 'ПРАНК', 'ПРУФ/ПРУФАНУТЬ', 'ПУШИТЬ', 'РАШИТЬ', 'РЕЙВ', 'РЕТЕЙК',
+        'РИЗЗ', 'РОФЛ/РОФЛИТЬ', 'РУМПЕР', 'РЫБИПИК', 'СВЕГ 2', 'СИГМА', 'СИМП', 'СКАМ', 'СКИБИДИ ДОП-ДОП ЕЕ-ЕЕ',
+        'СКИЛЛ', 'СКИН', 'СКИНХЕД', 'СКОММУНИЗДИТЬ', 'СКОРЛУПА', 'СКУФ 3', 'СЛЭМ/СЛЕЙМИТЬ', 'СЛД',
+        'СЛП', 'СОСАТЬСЯ', 'СОУЛМЕЙТ', 'СОЯ', 'СПАМ', 'СПИДРАН', 'СТАЛКЕРИТЬ', 'СТРЕЛКА', 'СТРЕЛОЧНИК',
+        'СУЧОПЭГО', 'СЮДА', 'СЯБИ', 'ТАЛИК', 'ТЕМКА', 'ТЕЛЕГА', 'ТЕРМИНАЛЬНО ОНЛАЙН', 'ТЕРПИЛА',
+        'ТИЛЬТ', 'ТОПКА', 'ТРАП', 'ТРАПКА', 'ТРЕШ', 'ТРУШНО', 'ТРЯПКА', 'ТЫЧКА', 'ТЮБИК', 'ТЯН',
+        'ТЯГИ БАРХАТНЫЕ', 'УВУ ОВО', 'ФАСТОМ', 'ФЕМБОЙ', 'ФИД', 'ФЛЕКС', 'ФЛЕКСИКОН', 'ФОРМИЛА',
+        'ФОРСИТЬ', 'ФРЕНДЗОНА', 'ФРИК', 'ХАЙП', 'ХАТА', 'ХАЧ', 'ХЕЙТ/ХЕЙТЕР/ХЕЙТИТЬ', 'ХАССЛИТЬ (ХАССЛ)',
+        'ХОУ', 'ЧАД', 'ЧЕКНУТЬ', 'ЧЕЛ', 'ЧЕПУХ/ДЕКОЛОНИЗАТОР', 'ЧЕТЫРКА', 'ЧЕЧИК', 'ЧИВАЦА', 'ЧИЛЛ 2/ЧИЛЛИТЬ',
+        'ЧИТЕР/ЧИТЕРИТЬ', 'ЧОКО БОЙ', 'ЧСВ', 'ЧУБЗИК', 'ЧУДЕСА КУЛИНАРИИ', 'ЧУРКА', 'ЧУШПАН', 'ШАРИТЬ',
+        'ШЕРИТЬ', 'ШЕЙМИТЬ', 'ШИППЕРИТЬ', 'ШКАБЕТКА', 'ШКАФ', 'ШКЕРИТЬСЯ', 'ШКЕТ', 'ШТАНЫ', 'ШТРИХ',
+        'ЭВО КАК', 'ЭКСТРЕМИСТ', 'ЭЙС', 'ЯДЕРНАЯ БОМБА'
+    ];
+
+    let wordStatus = {};
+
+    // Загрузка сохраненных данных
+    function loadProgress() {
+        const saved = localStorage.getItem('slangDictionaryProgress');
+        if (saved) {
+            wordStatus = JSON.parse(saved);
+        }
+        updateDisplay();
+    }
+
+    // Сохранение прогресса
+    function saveProgress() {
+        localStorage.setItem('slangDictionaryProgress', JSON.stringify(wordStatus));
+        alert('Прогресс сохранен!');
+    }
+
+    // Сброс прогресса
+    function resetProgress() {
+        if (confirm('Вы уверены, что хотите сбросить весь прогресс?')) {
+            wordStatus = {};
+            localStorage.removeItem('slangDictionaryProgress');
+            updateDisplay();
+        }
+    }
+
+    // Установка статуса слова
+    function setWordStatus(word, status) {
+        wordStatus[word] = status;
+        updateDisplay();
+        updateStats();
+    }
+
+    // Обновление отображения
+    function updateDisplay() {
+        const grid = document.getElementById('dictionaryGrid');
+        grid.innerHTML = '';
+
+        slangWords.forEach(word => {
+            const currentStatus = wordStatus[word] || 'unknown';
+
+            const wordElement = document.createElement('div');
+            wordElement.className = `word-item ${currentStatus}`;
+            wordElement.innerHTML = `
+                    <div class="word-text">${word}</div>
+                    <div class="status-buttons">
+                        <button class="status-btn btn-known-used" onclick="setWordStatus('${word}', 'known-used')">✅</button>
+                        <button class="status-btn btn-known-not-used" onclick="setWordStatus('${word}', 'known-not-used')">💛</button>
+                        <button class="status-btn btn-unknown" onclick="setWordStatus('${word}', 'unknown')">❌</button>
+                    </div>
+                `;
+            grid.appendChild(wordElement);
+        });
+
+        updateStats();
+    }
+
+    // Обновление статистики
+    function updateStats() {
+        const counts = {
+            'known-used': 0,
+            'known-not-used': 0,
+            'unknown': 0
+        };
+
+        slangWords.forEach(word => {
+            const status = wordStatus[word] || 'unknown';
+            counts[status]++;
+        });
+        document.getElementById('knownUsedCount').textContent = counts['known-used'];
+        document.getElementById('knownNotUsedCount').textContent = counts['known-not-used'];
+        document.getElementById('unknownCount').textContent = counts['unknown'];
+        document.getElementById('totalCount').textContent = slangWords.length;
+    }
+
+    // Экспорт результатов
+    function exportResults() {
+        let results = "СЛОВАРЬ СЛЕНГА - МОИ РЕЗУЛЬТАТЫ\n\n";
+
+        const categories = {
+            'known-used': "✅ ЗНАЮ И УПОТРЕБЛЯЮ:",
+            'known-not-used': "💛 ЗНАЮ, НО НЕ УПОТРЕБЛЯЮ:",
+            'unknown': "❌ НЕ ЗНАЮ:"
+        };
+
+        Object.entries(categories).forEach(([status, title]) => {
+            const wordsInCategory = slangWords.filter(word => (wordStatus[word] || 'unknown') === status);
+            if (wordsInCategory.length > 0) {
+                results += `${title}\n`;
+                wordsInCategory.forEach(word => {
+                    results += `• ${word}\n`;
+                });
+                results += '\n';
+            }
+        });
+        // Создаем и скачиваем файл
+        const blob = new Blob([results], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'мой-словарь-сленга.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // Инициализация
+    document.addEventListener('DOMContentLoaded', function() {
+        loadProgress();
+
+        document.getElementById('saveBtn').addEventListener('click', saveProgress);
+        document.getElementById('resetBtn').addEventListener('click', resetProgress);
+        document.getElementById('exportBtn').addEventListener('click', exportResults);
+    });
+
+    // Делаем функции глобальными для использования в onclick
+    window.setWordStatus = setWordStatus;
+</script>
+</body>
+</html>
